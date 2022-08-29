@@ -1,27 +1,45 @@
-import React from "react";
-import { Card, CardBody, CardTitle, CardImg, CardFooter } from "reactstrap";
+import React, { useState } from 'react';
+import { Button, Card, CardBody, CardTitle, CardImg, CardFooter, Modal, ModalHeader, ModalBody } from "reactstrap";
+import notFound from "../assets/not-found-image.jpeg"
 import classes from './MovieCard.module.css'
 
 const MovieCard = ({ movie }) => {
+  const [modal, setModal] = useState(false);
+
+  const posterPath = movie.poster_path
+  let imageSrc;
+
+  if (posterPath == null) {
+    imageSrc = notFound
+  }
+  else {
+    imageSrc = `https://image.tmdb.org/t/p/w600_and_h900_bestv2/${posterPath}`
+  }
+
+  const toggle = () => setModal(!modal);
+
   return(
     <Card>
       <CardImg
-        src={`https://image.tmdb.org/t/p/w600_and_h900_bestv2/${movie["attributes"].poster_path}`}
-        alt={movie["attributes"].title}
+        src={imageSrc}
+        alt={movie.title}
       />
       <CardBody >
         <CardTitle className={classes.title}>
-          {movie["attributes"].title} ({movie["attributes"].release_year || "Unknown Release Date"})
+          {movie.title}
+          ({movie.release_year || "Unknown Release Date"})
         </CardTitle>
-        <h1 className={classes.vote}>
-          {movie["attributes"].vote_average.toString()}
-        </h1>
       </CardBody>
+      <Button size="sm" onClick={toggle}>info</Button>
       <CardFooter>
         <span>
-          {movie["attributes"].genre_names}
+          {movie.genre_names || "No genres provided." }
         </span>
       </CardFooter>
+      <Modal isOpen={modal} toggle={toggle}>
+        <ModalHeader toggle={toggle}>{movie.title}</ModalHeader>
+        <ModalBody>{movie.overview}</ModalBody>
+      </Modal>
     </Card>
   )
 }
