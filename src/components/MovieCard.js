@@ -1,15 +1,28 @@
 import React from "react";
+import { Card, CardBody, CardTitle, CardImg, CardFooter } from "reactstrap";
+import classes from './MovieCard.module.css'
 
 const MovieCard = ({ movie }) => {
   return(
-    <div>
-      <h2>{movie["attributes"].title}</h2>
-      <p>{movie["attributes"].overview}</p>
-      <p>{movie["attributes"].poster_path}</p>
-      <p>{movie["attributes"].vote_average}</p>
-      <p>{movie["attributes"].release_year}</p>
-      <p>{movie["attributes"].genre_names}</p>
-    </div>
+    <Card>
+      <CardImg
+        src={`https://image.tmdb.org/t/p/w600_and_h900_bestv2/${movie["attributes"].poster_path}`}
+        alt={movie["attributes"].title}
+      />
+      <CardBody >
+        <CardTitle className={classes.title}>
+          {movie["attributes"].title} ({movie["attributes"].release_year || "Unknown Release Date"})
+        </CardTitle>
+        <h1 className={classes.vote}>
+          {movie["attributes"].vote_average.toString()}
+        </h1>
+      </CardBody>
+      <CardFooter>
+        <span>
+          {movie["attributes"].genre_names}
+        </span>
+      </CardFooter>
+    </Card>
   )
 }
 
