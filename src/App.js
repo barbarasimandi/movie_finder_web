@@ -12,27 +12,37 @@ function App() {
   const [search, setSearch] = useState('')
   const [totalPages, setTotalPages] = useState(1)
   const [currentPage, setCurrentPage] = useState(0)
+  const [error, setError] = useState(undefined)
 
   const getMovies = async () => {
     try {
-      const {data} = await axios.get(`http://localhost:4000/api/v1/movies?search=${search}&page=${currentPage}`);
-      setMovies(data.data);
-      setTotalPages(data.total_pages)
+      const { data } = await axios.get(`http://localhost:4000/api/v1/movies?search=${search}&page=${currentPage}`);
+
+      if (data.hasOwnProperty('data')) {
+        setError(undefined)
+        setMovies(data.data);
+        setTotalPages(data.total_pages)
+      } else {
+        setError(data.errors.join(", "))
+      }
+
+      if (currentPage === 0) setCurrentPage(1)
+
     } catch (error) {
-      console.log(error)
+      setError(error)
     }
   };
 
   useEffect(() => {
     getMovies();
-  }, [search, currentPage])
+  }, [search, setSearch, currentPage, setCurrentPage])
 
   const searchHandler = (query) => {
+    setCurrentPage(0)
     setSearch(query)
   }
 
-  const paginationHandler = (event, currentPage) => {
-    event.preventDefault();
+  const paginationHandler = (_event, currentPage) => {
     setCurrentPage(currentPage)
   }
 
@@ -43,7 +53,6 @@ function App() {
         <SearchForm
           onSearch={searchHandler}
         />
-
         <MovieCardList
           movies={movies}
         />
@@ -51,6 +60,7 @@ function App() {
         <Pagination
           showFirstButton={true}
           showLastButton={true}
+          page={currentPage}
           count={totalPages}
           variant="outlined"
           onChange={paginationHandler}

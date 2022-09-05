@@ -16,6 +16,9 @@ const MovieCard = ({ movie }) => {
     imageSrc = `https://image.tmdb.org/t/p/w600_and_h900_bestv2/${posterPath}`
   }
 
+  const releaseYearInfo = movie.release_year ? movie.release_year.slice(0,4) : "Unknown release date"
+  const genreInfo = movie.genre_names ? movie.genre_names : "No genres provided"
+
   const toggle = () => setModal(!modal);
 
   return(
@@ -27,13 +30,16 @@ const MovieCard = ({ movie }) => {
       <CardBody >
         <CardTitle className={classes.title}>
           {movie.title}
-          ({movie.release_year || "Unknown Release Date"})
+          ({releaseYearInfo})
         </CardTitle>
+        <h1 className={classes.vote}>
+          {movie.vote_average.toString()}
+        </h1>
       </CardBody>
       <Button size="sm" onClick={toggle}>info</Button>
       <CardFooter>
         <span>
-          {movie.genre_names || "No genres provided." }
+          {genreInfo}
         </span>
       </CardFooter>
       <Modal isOpen={modal} toggle={toggle}>
